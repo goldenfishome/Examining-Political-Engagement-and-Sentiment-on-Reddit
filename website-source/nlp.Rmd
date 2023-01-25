@@ -1,0 +1,165 @@
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  font-family: "Times New Roman", Times, serif;
+}
+</style>
+
+```{r setup, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = '..')
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+knitr::include_graphics(paste0(getwd(), "/website-source/politics_banner.png"))
+```
+
+
+### ***Examining Political Engagement and Sentiment on Reddit - NLP Deliverable***
+
+<br>
+
+|    *ANLY 502 Final Project*
+|    *Group Members: Clara Richter, Elise Rust, Yujia Jin*
+|    *Fall 2022*
+
+<br>
+
+##### <span style="color:DarkBlue">This page contains the executive overview and analysis summary for NLP work on the Reddit data project. Links to relevant code notebooks are attached throughout.</span>
+
+Directory: <br>
+1. **[Homepage](index.html)**
+2. **[Exploratory Data Analysis](eda.html)**
+3. **[Machine Learning Analysis](ml.html)**
+4. **[Conclusion](conclusion.html)**
+<br>
+#### **Executive Summary:**
+&emsp;    In the wake of the tumultuous and high profile 2022 U.S. midterm elections, our analytical goal has been to dive deeper into political discourse in the country using Natural Language Processing (and soon Machine Learning). Across this project we analyze American political sentiment, rooting our analysis the lens of a non-profit or lobbyist firm hoping to maximize engagement with certain political, economic, and social issues. We aim to explore different political subreddits across the political spectrum and understand common topics being discussed via Reddit on each as well as the sentiment and levels of polarization on each. Then, by examining these correlations and trends we can begin to understand how external variables such as an election year, or economic indicators like the DOW, affect sentiment/polarization in different political subreddits. <br>
+&emsp;    From our Natural Language Processing work we have identified a few key patterns. First, upon examining how sentiment varies across three subreddits (r/politics, r/Republicans, and r/democrats) we discover that, while primary posts have a similar distribution of sentiment across all three subreddits, the comments section of the r/politics subreddit sees significantly higher engagement in terms of number of comments, and those comments tend towards ‘negative’. This implies that in the general r/politics subreddit, where multiple viewpoints are more likely to engage, there is more negative discussion; whereas, in individual party subreddits people’s agreement on issues leads to more positive discussion. We also employed topic modeling to identify 4 main political topics in which posts fall into: ‘Climate’, ‘Economy’, ‘Healthcare’, and ‘Police.’ Among these topic groups, the topic which spawned both the widest range of sentiment types and the most text with a ‘negative’ sentiment label was ‘Police’.  Additionally, we discovered that sentiment does not seem to be correlated to key performance indicators such as DOW, CPI, and unemployment rate. Further regression analysis and classification will be performed in the Machine Learning section to explore potential correlations, but our exploratory NLP analysis offers a helpful first pass at understanding what external variables are key predictors of sentiment.
+<br>
+
+
+```{r, echo=FALSE,warning=FALSE, out.width="60%", out.height="20%",fig.cap="**[Fig. 1]** Correlation between sentiment and subreddit, broken down by topic", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_topics.png"))
+```
+
+
+```{r, echo=FALSE, warning=FALSE, out.width="60%", out.height="20%",fig.cap="**[Fig. 2]** Correlation between economic indicators and sentiment", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/kpis_sentiment.png"))
+```
+
+
+<br>
+
+#### **External Dataset:**
+
+&emsp;    To expand the analysis, we’ve opted to gather an external dataset that combines various Key Economic Performance Indicators (e.g. inflation rate, unemployment rate, DOW) by month between 2020 and 2021 from <a href=https://data.bls.gov/cgi-bin/surveymost?bls>The Bureau of Labor Statistics</a>. Many of our NLP questions are related to political sentiment and polarization along party lines, topic lines, etc. and there is much research that indicates that economic conditions are highly correlated to political sentiment. 
+Initial summary statistics and time series plots of the KPIs indicate that 2020, expectedly, produced a significant decline in the DOW as well as an uptick in unemployment rate. Since then, both indicators have been steadily returning to normal levels. Consumer Price Index, a measure of the average change over time in the prices paid by consumers for a market basket of consumer goods, is indicative of inflation/deflation and the purchasing power of individual American consumers. CPI has been steadily increasing over the time period of interest; thus, if sentiment of comments trends more positive or negative over this time period a potential correlation can be examined.
+
+**Articles discussing this correlation between economic growth and politics:** <br>
+1) <a href=https://link.springer.com/chapter/10.1007/978-1-349-26284-7_9>Paldam, Martin. "Does economic growth lead to political stability?." In The Political Dimension of Economic Growth, pp. 171-190. Palgrave Macmillan, London, 1998.</a><br>
+2) <a href=https://www.imf.org/en/Publications/fandd/issues/2020/06/political-economy-of-economic-policy-jeff-frieden. >Frieden, Jeffrey. “The Political Economy of Economic Policy - IMF F&D.” IMF. IMF, June 2020.</a><br>
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/KPIs_DOW.png"))
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/KPIs_fig1.png"))
+```
+
+<br>
+<br>
+
+#### **Analysis Report:**
+
+&emsp;    Using Python and Spark NLP, we analyze American political sentiment, rooting our analysis in the lens of a non-profit or lobbyist firm hoping to maximize engagement with certain political, economic, and social issues. By parsing specific political subreddits (r/politics, r/Republicans, r/democrats), we can extract the text from relevant Reddit posts and comments to begin to answer some of our business questions. We first conducted some basic NLP pre-processing and data exploration to identify the most common words being used overall, and across the three different subreddits. Unsurprisingly, **Trump, Biden, Democrat, and Republican** were among the top 5 words most commonly used. Interestingly though, **vote, capitol, COVID, vaccine, white, Texas, and ban** all appeared in the top 50 words, reflecting topics that are being heavily discussed in mainstream media and by politicians around 
+```{r, echo=FALSE, warning=FALSE, out.width="80%", out.height="20%",fig.cap="**[Fig. 3]** Top 50 frequently used words in the titles of political subreddit posts.", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/top_50_words.png"))
+```
+<br>
+
+subjects such as the capitol riots on January 6 or the politicization of the coronavirus pandemic. Additionally, by generating wordclouds for the most common words by subreddit we see that **Trump** is one of the most common words on r/politics, along with **vote, civil, plea, right, and discuss**. On r/Republican, **republican, vote, concern, partisan, subvert, and differ** appear frequently while r/democrats sees **democrat, reddit, rule, people, Trump, and work** in high usage. TFIDF-vectorizing the text produced very similar outcomes. As we’re interested in engagement, we also were able to look at comment lengths and most people are commenting between 29 and 86 words, with a mode frequency at 58 word comments. This translates to about 5-20 words, indicating that the majority of discourse on these subreddits is for short bursts of speech instead of lengthy discourse about politics.
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/website-source/wordclouds.png"))
+```
+
+
+&emsp;    With the data cleaned and explored, we trained a sentiment model using the <a href=https://nlp.johnsnowlabs.com/2021/01/18/sentimentdl_use_twitter_en.html>pre-trained Twitter sentiment classifier from jonsnowlabs NLP</a>. There are many similarities between the types of text that appear on Twitter and Reddit due to their conversational thread architecture and popular use cases as short-form community discourse platforms. Thus, using a classifier trained on Twitter data is easily extrapolated to Reddit data as well. From this classifier, we were able to output sentiment labels for all texts and titles in the dataset and combine the sentiment labels with other variables to begin answering the business questions outlined above.
+
+<br>
+<br>
+**Beginning to Explore Business Questions**
+
+**1) Which subreddits produce the most/least negative discourse in their comments? In their titles?**
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_subreddits.png"))
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_subreddits_com.png"))
+
+```
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_subreddits_com.png"))
+```
+
+
+&emsp;    We were interested in investigating the distribution of sentiment labels across different subreddits as it could shine light on the types of engagement that each subreddits’ users respond best to. We examined comments and submissions separately as submissions shine light on the type of content (mostly news articles on these subreddits) being shared versus comments illustrating the sentiment of discussions and inter-user interactions. From this analysis we see that across posts, the average sentiment is largely negative. It is fairly well documented that the mainstream media (especially with the rise of the 24 hour news cycle) appears to <a href=https://www.pnas.org/doi/10.1073/pnas.1908369116>cover mostly negative stories</a> due to journalistic practices and the innate human tendency to pay more attention to negative stories. Thus, it makes sense that when sharing news stories, those titles skew negative. More interesting, however, is sentiment analysis of comments. r/Republican actually skews positive in the comments section by **1,274 more positive comments than negative ones**, while r/democrats skew negative by **16,398 comments**. The subreddit with the highest negative skew though, is **r/politics which has 150,648 more negative comments than positive** (out of 514,061 comments during this time period). This represents **62%** of the comments, while positive comments make up 32.7% of the comments. This may indicate that on a subreddit where the whole span of political ideologies are being represented there is more negative discourse; whereas, in siloed political spheres people share a somewhat more unified viewpoint and comment less negative text.
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/website-source/sent_reddit_table.png"))
+```
+
+**2) Which topics are correlated to the highest rates of negative sentiment and/or polarization?**
+
+```{r, echo=FALSE, warning=FALSE, out.width="60%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_topics.png"))
+```
+
+&emsp;    To get more granular, we performed similar clustered sentiment analysis by topic. We utilized topic modeling to identify 4 main political topics in which posts fell into: ‘Climate’, ‘Economy’, ‘Healthcare’, and ‘Police’ to capture both some of the most polarizing political topics today (Climate and Police) as well as some more unifying topics (Economy, Healthcare). Among these topic groups, the topic which spawned both the widest range of sentiment types and the most text with a ‘negative’ sentiment label was ‘Police’, with 66.7% of text in the category getting labeled as ‘negative’ and only 28.6% of text labeled as ‘positive.’ Given the timeframe of this dataset between 2020-2021 this makes sense, as police have seen a recent resurgence in criticism and bad press after the  June 2020 ‘Black Lives Matter’ protests that sparked outrage from many major urban centers. On the other hand, in response to these criticisms, many staunch supporters of the police have pushed back with the ‘Blue Lives Matter’ movement and positive commentary. As expected, climate change similarly skewed negative, with 61.5% of the text labeled ‘negative’, but actually saw the highest rate of positive discussion of any topic at 33.8%. However, climate change overall only captured ~5,000 comments and is thus the least discussed topic of the group. Our two less polarizing topics, Economy and Healthcare, also skewed negative at 65.9% and 66.5% negative respectively. 
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/website-source/sent_topic_table.png"))
+```
+
+**3) Do posts with positive, negative, or neutral sentiment receive the most engagement on Reddit?**
+
+&emsp;    This is a bit of a subquestion, but in the quest to understand and maximize engagement, we define “engagement” as the number of comments on a post and the score of a post (number of upvotes minus the number of downvotes), and compare to sentiment labels. The **key outcome remains that sentiment is fairly evenly distributed across scores of a post and number of comments**. There may be a slight correlation between number of comments that a post has, with the post text skewing negative but this would have to be examined further in regression analysis which is outside of the time parameters of this milestone and may be explored in the ML milestone. However, these graphs do tell us that there are more posts with fewer comments and low scores (the majority of posts have little to no engagement). We have already observed that there are many more negative posts than positive or neutral posts, so it is no surprise to find that there are a high number of negative posts across low and high engagement. 
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_comments.png"))
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/sent_score.png"))
+
+```
+
+
+**4) How polarized is political discourse these days? Which political topics produce the most polarized discourse? **
+
+&emsp;    Our analysis briefly explored “polarization” of text as well, defined here as the range of positive to negative sentiment appearing on a given subreddit. This is simply a reframing of our business question #1 but presented in a clearer and more concise way to display polarization. We had initially proposed classifying text sentiment using the external VADER classifier, but due to technical and time constraints decided that it was outside of the scope of this analysis. Thus, in exploring which subreddits exhibit the widest range of sentiment, again r/politics leads, with a spread of 108,019 more negative comments than positive comments.
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/polarization_comments.png"))
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/polarization_subreddits.png"))
+
+```
+
+
+**4) How does the economy influence political sentiment? When KPIs (Key Performance Indicators) like unemployment rate are high, how does that affect the types of media and comments that are commonly posted?**
+
+```{r, echo=FALSE, warning=FALSE, out.width="60%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(),"/data/plots/nlp/kpis_sentiment.png"))
+```
+
+&emsp;    Finally, it was important to utilize and explore our KPIs external dataset so we examined the correlation between different indicators and sentiment over time, grouped by month and year. Plotting these trends over time illustrates some interesting patterns. Firstly, it seems that none of the KPIS are immediately correlated with sentiment, which is surprising given the literature. Our hypothesis was that CPI would be highly correlated with sentiment as research from many academics and <a href=https://www.bloomberg.com/opinion/articles/2021-04-13/consumer-price-index-cpi-history-is-surprisingly-political>news outlets have reported that</a> inflation, and people’s individual day to day expenses, influence how they feel about politics - especially the political party and president in power. Also, any inflation is bound to spark discontent as the basic basic of goods gets more expensive and monthly bills increase; thus, leading to more negative sentiment across all subreddits. However, the data during this time period shows that negative sentiment peaked early on in the year and has been steadily decreasing over time, while CPI has been steadily increasing. Additionally, DOW has been steadily increasing and the Unemployment rate has been decreasing fairly linearly instead of exponentially like sentiment. We would like to further explore these relationships with regression analysis in the next milestone but initial findings are not promising in uncovering a relationship between economic growth and sentiment.
+
+<br>
+**Appendix - Notes from Previous Iterations**<br>
+&emsp;    One final note is that the business questions shifted between EDA and NLP work. As we got deeper into the data, new understandings of what questions may be most interesting and cohesive, and which are outside of the scope of this project, became clear. The biggest change is that we had previously pitched training a fraudulent text classifier on the LIAR dataset and using it to predict fake text labels for all of our texts. Upon further discussion, we have decided to change external datasets to our KPI dataset to analyze economic indicators of sentiment instead. Additionally, we clarified the line between NLP and ML questions a bit better (our initial business questions were a bit shaky on which tasks would fall under each) so we have simply reorganized them. We also felt that the question ‘How can nonprofits, lobbyists, and politicians leverage Reddit to push legislative agendas?’ was more indicative of our guiding question for the whole analysis than a specific business question with a technical approach so it has been replaced with ML questions regarding prediction and classification of an election year or subreddit from sentiment of text.
+
+<br>
+Relevant Scripts: <br>
+**[Data Cleaning and NLP Processing](NLP_Data_Cleaning.html)**<br>
+**[Sentiment Analysis](sentiment_analysis.html)**

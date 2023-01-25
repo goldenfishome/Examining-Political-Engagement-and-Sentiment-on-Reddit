@@ -1,0 +1,147 @@
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  font-family: "Times New Roman", Times, serif;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '..')
+```
+
+```{r echo=FALSE, warning=FALSE}
+knitr::include_graphics(paste0(getwd(), "/website-source/politics_banner.png"))
+```
+
+### ***Examining Political Engagement and Sentiment on Reddit - EDA Deliverable***
+
+<br>
+
+|    *ANLY 502 Final Project*
+|    *Group Members: Clara Richter, Elise Rust, Yujia Jin*
+|    *Fall 2022*
+
+<br>
+
+##### <span style="color:DarkBlue">This page contains the **Exploratory Data Analysis** work on the Reddit data project. Links to relevant code notebooks are attached throughout.</span>
+
+<br>
+Directory:
+1. **[Homepage](index.html)**
+2. **[Natural Language Processing Analysis](nlp.html)**
+3. **[Machine Learning Analysis](ml.html)**
+4. **[Conclusion](conclusion.html)**
+
+<br><br>
+
+#### **Executive Summary:**
+&emsp;   There are many reasons why a user or firm might want to maximize engagement in Reddit political subreddits. One might be working for a political campaign and want to gain more visibility for their candidate or candidate’s messages. Or one might be involved in a political movement and want to spread information about an issue or about events taking place. Whatever the reason, for an audience that wants to maximize that engagement, this section of our project aims to discover how and what to post on political subreddits to get that high engagement. The political subreddits we have examined are r/politics, r/Republicans, and r/democrats - which span the two major nodes of the two-party system. We begin our exploration of the data by answering three EDA questions:  <br>
+&emsp; &emsp;  1. How can we measure “engagement” on Reddit? In what ways do people interact with a post?<br>
+&emsp; &emsp;  2. When are the best times to post on Reddit to get the most engagement?<br>
+&emsp; &emsp;  3. How long should a Reddit title be to get the most engagement? How many sentences, words, or length of words?<br>
+&emsp;    From our exploratory data analysis we first identified that the best time to post on all three subreddits was Afternoon (between noon and 6pm) in order to maximize the number of comments a post received. Night and morning hours (12am - 6am, and 6am - noon, respectively) were the worst times to post in terms of number of comments [fig. 1]. Interestingly, these trends were pretty uniform across subreddits, indicating that Reddit users across all ideologies interact with the platform in a similar way. Our EDA also shows that a good length of the title of the post is between 50-100 words in order to gain maximum engagement  [fig. 2]. <br><br>
+
+
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(), "/website-source/fig1_eda.png"))
+knitr::include_graphics(paste0(getwd(), "/website-source/fig2_eda.png"))
+```
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(), "/website-source/cap12.png"))
+```
+
+<br>
+<br>
+
+#### **Analysis Report:**
+
+&emsp;    The data for this exploratory data analysis comes from three political subreddits ( r/politics, r/Republicans, and r/democrats) using the Pushshit Reddit API to get text of post and comments, score, number of comments on the post, time of post and more. The original dataset was generated via the Reddit Archive data from January 2021 through the end of August 2022.
+<br>
+&emsp;    Before analyzing trends across subreddits, data first needed to be cleaned. We followed standard data cleaning procedures - starting with filtering submissions and comments for our relevant subreddits (r/politics, r/Republicans, and r/democrats). Then the number of submissions from each subreddit was subsetted to a randomly selected 20,000 submissions so that each subreddit would have an equal number of  submissions. R/politics is a highly populated and used subreddit, far outnumbering r/Republican or r/democrats in the number of posts and comments. Keeping sample sizes consistent across datasets was critical in preventing any bias or skew. Additionally, we kept all the submissions and all the comments in two separate data frames as they were used to answer different questions throughout the study. 
+<br>
+&emsp;    Further data cleaning entailed dropping rows with missing text in posts and comments as analyzing the text is the main component of the study. We chose to keep only the first level comments of the posts from the submission dataset to extract immediate reactions and sentiments about the posts analyzed, rather than including 5th or 6th level replies that were typically less content rich. Basic quality checks were also conducted such as data type conversions, and we dealt with outliers by converting the subreddit column to categorical and the score and number of comments columns to integer values. 
+For basic feature generation, the time of the post variable was converted into a proper data time value and five new variables were created with data transformations on the data time value: [*month, year, time of day, election_year*]. We also extracted critical political topics in national discourse in the form of 4 dummy variables using regex: [*"dummy_police", "dummy_healthcare", "dummy_climate", "dummy_economy"*]. 
+With the data cleaned and prepared, the crux of our exploratory analysis work revolved around the following three EDA business questions.
+<br>
+<br>
+
+##### &emsp;    **1. How can we measure “engagement” on Reddit? In what ways do users interact with a post?**
+<br>
+&emsp;    For this study, we decided to categorize “engagement” as upvotes/downvotes (score) and number of comments. The more of these interactions a post has, the more engagement it has received. To see how correlated score and number of comments are, we plot them in figure 3 and figure 4.
+<br>
+<br>
+```{r, echo=FALSE, warning=FALSE, out.width="49%", out.height="20%",fig.cap=" ", fig.show='hold',fig.align='center'}
+
+knitr::include_graphics(paste0(getwd(), "/website-source/fig3_eda.png"))
+knitr::include_graphics(paste0(getwd(), "/website-source/fig4_eda.png"))
+```
+
+```{r echo=FALSE, warning=FALSE, out.width="65%", out.height="20%", fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/cap34.png"))
+```
+<br>
+&emsp;    Figure 3 plot shows the relationship between the score and number of comments of all three subreddits. The dataset used in this plot is the subset of the original dataset, 1000 records of each subreddit - for scatter plot visibility. The score of most posts lay within the range of 0 to 2,000 and most of the number of comments lay within the range of 0 to 100. Both the scores and number of comments on the r/politics subreddits have a much wider range than other two subreddits. The post score has a roughly positive relationship with the number of comments - likely because the more people who upvote a post, the higher visibility it is on a subreddit which leads to more commenters. Figure 4 shows the same two variables with altered range, it shows the same positive relationship between these two variables.
+<br>
+<br>
+
+##### &emsp;    **2. When are the best times to post on Reddit to get the most engagement?**
+<br>
+&emsp;    By examining the distribution of ‘number of comments’ and ‘scores’ across the time variables previously created (e.g. ‘*hour*’ or ‘*time of day*’), we can understand correlations between engagement and time.
+<br>
+<br>
+```{r echo=FALSE, warning=FALSE, out.width="60%", out.height="20%",fig.cap="**[Fig. 5]** Reddit posts by hour of the different political subreddits.", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/fig5_eda.png"))
+```
+
+
+<br>
+&emsp;    Figure 5 shows the distribution of the number of Reddit posts by the hour. Each subreddit has the same sum of posts, 20000. Similar to the pattern of plot in figure 6, the post of all three subreddits peaks at afternoon and reaches bottom in the morning. The Republican subreddit has much higher posts than the other 2 subreddits from 12:00 to 16:00 while democrats subreddits have the highest number of posts from 22:00 to 4:00.
+<br>
+
+```{r echo=FALSE, warning=FALSE, out.width="65%", out.height="20%",fig.cap="**[Fig. 6]** Number of comments posted per hour from each political subreddit.", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/fig6_eda.png"))
+```
+
+<br>
+
+&emsp;    Figure 6 shows the distribution of the number of comments of reddit posts by hour. These three subreddit share the same pattern of fluctuation of number of comments throughout the day. The number of comments peaked in the afternoon at around 15:00 to 16:00 and stayed lowest at morning time, 6:00 to 9:00. 
+<br>
+
+```{r echo=FALSE, warning=FALSE, out.width="65%", out.height="20%",fig.cap="**[Fig. 1 - again]** Number of comments by time of day for each political subreddit. ", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/fig1_eda.png"))
+```
+<br>
+&emsp;    Figure 1 shows the distribution of the number of comments of reddit posts for the time of the day. This plot is consistent with figure 6. The number of comments of all three subreddits peaks at afternoon and reaches lowest at night and morning.
+<br>
+<br>
+```{r echo=FALSE, warning=FALSE, out.width="65%", out.height="20%",fig.cap="**[Fig. 7]** Ratio of posts to number of comments per hour for each political subreddit.", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/fig7_eda.png"))
+```
+<br>
+&emsp;    The figure 1 cannot answer the business question 1 and 2, 'How can we measure “engagement” on Reddit? In what ways do people interact with a post?' and 'When are the best times to post on Reddit to get the most engagement?', even though the number of comments is a good indicator of engagement on Reddit, since the number of comments is related to the number of posts. In order to avoid this issue, here creates a new variable: the ratio of count of posts to the number of total comments at a specific hour and generated figure 7. All the three subreddits have similar fluctuations on the ratio among the day. They all have relatively higher ratios from 11:00 to 17:00 and relatively lower ratios from 5:00 to 9:00. The answer to these business questions is the best time to post on Reddit to get the most engagement is around afternoon time.
+<br>
+<br>
+
+##### &emsp;    **3. How long should a Reddit post be to get the most engagement? How many sentences or words should a post have? What’s the optimal length of words?**
+<br>
+```{r echo=FALSE, warning=FALSE, out.width="60%", out.height="20%",fig.cap="**[Fig. 2 - again]** Number of comments by title length for each political subreddit.", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/fig2_eda.png"))
+```
+
+<br>
+
+&emsp;    The variable title_length was created to store the number of words in each post. Figure 2 shows the relationship between the length of posts and number of comments for the political subreddits. The dataset used in this graph is a subset of the original dataset, which takes 1000 rows of each subreddit. According to figure 2, the number of comments reaches the peak at around title length of 70. For maximum engagement, posts should be around 70 words long.
+<br>
+&emsp;    Thus, through Exploratory Data Analysis of the political subreddit posts we were able to address our first few business questions regarding maximization of engagement among the different political subcommunities. For a user or firm interested in pushing a legislative agenda or a social/political/economic idea, their posts should be around 70 words long and should be posted during the afternoon (12pm - 6pm) on any political subreddits for maximum engagement.
+
+<br>
+<br>
+<br>
+
+Relevant Scripts: <br>
+**[Data Cleaning and Exploratory Analysis](project_eda.html)**
+

@@ -1,0 +1,134 @@
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  font-family: "Times New Roman", Times, serif;
+}
+</style>
+
+```{r setup, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '..')
+```
+
+```{r, warning=FALSE, echo=FALSE}
+knitr::include_graphics(paste0(getwd(), "/website-source/politics_banner.png"))
+```
+
+### ***Examining Political Engagement and Sentiment on Reddit - ML Deliverable***
+
+<br>
+
+|    *ANLY 502 Final Project*
+|    *Group Members: Clara Richter, Elise Rust, Yujia Jin*
+|    *Fall 2022*
+
+<br>
+
+##### <span style="color:DarkBlue">This page contains the **Machine Learning** work on the Reddit data project. Links to relevant code notebooks are attached throughout.</span>
+
+<br>
+Directory:
+1. **[Homepage](index.html)**
+2. **[Exploratory Data Analysis](eda.html)**
+3. **[Natural Language Processing Analysis](nlp.html)**
+4. **[Conclusion](conclusion.html)**
+
+<br>
+
+#### **Executive Summary:**
+&emsp;    The overarching goal of this analysis is to explore American political sentiment on Reddit, rooting our analysis in the lens of a non-profit or lobbyist firm hoping to maximize engagement with certain political, economic, and social issues. Previously, using Natural Language processing techniques we explored three different political subreddits to examine the most common topics being discussed via Reddit on each as well as the sentiment and levels of polarization on each. To build on this analysis we have employed Machine Learning models and techniques to dive deeper into the text itself via a series of regression and classification tasks.<br>
+&emsp;    Using two supervised regression models, Decision Tree and Gradient Boost Tree Regression, we attempted to predict one of our Key Performance Indicators of economic health, the DOW index, using title words on the **r/politics, r/Republicans, r/democrats** subreddits. Though we had initially hypothesized that there was some level of correlation between political sentiment and economic performance, that would show up in the text of Reddit posts, our analysis could not confirm this. The Gradient Boosting Regression model, the higher performing regression model of the two, generated a Pearson’s Correlation Coeffient of 0.133, indicating that **only 13.3% of the variance in the DOW index can be explained by the comments**. <br>
+&emsp;    Additionally, we ran a Random Forest classification analysis in order to better examine the differences between comments and discourse across our three subreddits of interest. While our Natural Language Processing analysis identified key patterns in sentiment trends and keywords across subreddits, the question remained: are there tangible differences in the content of comments found on r/politics, r/Republicans, and r/democrats. And if there are tangible differences, could a robust Machine Learning classification model correctly classify text into its respective subreddit? We found that, after a series of manual hyperparameter tuning, a Random Forest classifier was able to classify the subreddit of input text with **45.5%** accuracy. This confirms our results from previous portions of the project, which had identified noticeable differences across subreddits - especially in how positively or negatively Reddit users were dialoging on various channels. Though 45.5% accuracy is nowhere close to a perfect classification algorithm, for pure text classification across a multi-class problem it offers an exciting starting point.
+  
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 1]** Comparison of Regression Algorithms", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/reg_table.png"))
+```
+
+<br>
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 2]** Comparison of Classification Algorithms", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/classification_table.png"))
+```
+
+<br>
+<br>
+
+#### **Analysis Report:**
+
+<br>
+**1) Do the posts in political subreddits get influenced by the current state of the economy?**
+
+&emsp;    As noted previously, there is <a href="https://link.springer.com/chapter/10.1007/978-1-349-26284-7_9">extensive literature</a> that indicates that the economy and politics are deeply intertwined, given how important individual finances are on citizens’ perceptions of the political party in power. Though NLP analysis didn’t confirm this hypothesis, we wanted to examine it a bit further with Machine Learning models. Thus, we employed both supervised Decision Tree regression and Gradient Boosted Tree regression to establish the predictive power of TFIDF-vectorized Reddit text in predicting the DOW index. The DOW index in our dataset is measured by month and year, thus offering a continuous target variable to utilize regression learning on. A decision tree model was chosen for its effective handling of text data, as the series of simple decision rules by word make DT easy to interpret and understand. Decision trees also handle missing data incredibly well relative to other algorithms, making them ideal for large scale, publicly scraped data that may suffer from missing values. Gradient Boosted Tree Regression was chosen as a comparison model, as it forms an ensemble of decision trees and is generally seen as a more robust model than Decision Tree Regression. Gradient boosting builds a strong model by assembling a series of weaker models that iteratively learn from each other. By iteratively minimizing the loss function, gradient boosting keeps fine-tuning a tree model to best predict DOW from text data. <br>
+&emsp;    A supervised Decision Tree was trained on a subset of the data and predicting continuous DOW values on the testing set yielded poor results. With a Pearson’s Correlation Coefficient (R^2) of 0.092, **only 9.2% of the variance in the DOW index can be explained by the comments**. A supervised Gradient Boosted Tree Regression was then trained and tested to yield an R^2 of 0.133, indicating that **only only 13.3% of the variance in the DOW index can be explained by the comment**s. When comparing predicted DOW values to true values, we discovered a very low goodness of fit, as the month to month granularity of KPIs is not enough data to establish a fully continuous outcome variable. No clear prediction trends or correlations can be gleaned from this model.
+  
+```{r, echo=FALSE, warning=FALSE, out.width="50%", out.height="20%",fig.cap="**[Plot 1]** Results of Gradient Boost Regression", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/data/plots/ml/GB_Results.png"))
+```
+
+&emsp;    Other standard evaluation metrics examined were **RMSE/MSE/MAE**, which measure prediction errors by looking at how close a regression line is to the test points. Across all three metrics, Decision Tree Regression underperformed relative to Gradient Boosting. On the surface, 13.3% is a fairly low R^2 value; however, it is a promising starting point for pure text regression that suggests a stronger relationship could be identified in future work. The poor performance of these two regression models is not to say that a relationship between political discourse and economic health doesn’t exist at all. For a start, Reddit data may not be the most representative of political sentiment across the nation, and other platforms such as Twitter or local newspapers should be explored in future work. Additionally, the timeframe of analysis was limited to 2021-2022, and thus more robust future work would be well served to expand the timeframe and granularity of economic data.
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 1]** Comparison of Regression Algorithms", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/reg_table.png"))
+```
+
+
+<br>
+<br>
+**2) Are the comments from the different political subreddits distinct? Do they follow a pattern and can they be classified into their respective subreddits?**
+
+&emsp;    The second part of the ML analysis studied the last of our proposed business questions regarding the classification of text into distinct political subreddits. Given the political gridlock in Congress and the <a href="https://www.pewresearch.org/politics/2014/06/12/political-polarization-in-the-american-public/">intense partisanship of the two-party system</a> America is facing, we were interested in whether this polarization appears on Reddit. The three subreddits of interest are comprised of a non-partisan general political subreddit (r/politics), which theoretically includes discourse about topics that span the political spectrum, a left-leaning political subreddit (r/democrats), and a right-leaning political subreddit (r/Republican). The comments dataframe of Reddit data offers an interesting test case for this classification problem, as the anonymity of the platform encourages unfiltered, honest discussions about important political issues in the country. If we return to our original goal of providing intelligence to a marketing/lobbyist firm that’s interested in tailoring content to different users, then discovering distinct patterns in each subreddit that make them differentiable to a Random Forest classifier is highly useful. <br>
+&emsp;    To prepare the data for modeling, additional textual processing steps like tokenizing were performed, as well as ML transformations like String Indexing and One Hot Encoding the subreddit feature as it has more than 2 classes. A Machine Learning pipeline was used, stringing together these different data transformation and classification steps, so that large chunks of the code could easily be re-run for hyperparameter tuning. By building a Random Forest classification model, our goal was to test how partisan the subreddits’ text was by gauging how accurate a highly tuned supervised learning algorithm could classify text. A Random Forest model was chosen as it works incredibly well with high dimensionality  data and is robust to outliers and non-balanced data. Additionally, its interpretability makes RF a strong choice for text data. <br>
+&emsp;    Two different hyperparameter sets were used to compare classification results. The first, used 1,000 different trees, GINI impurity as the splitting parameter, and set minimum Information Gain to 10. The second used 500 trees, Entropy as the splitting parameter, and kept minimum Information Gain at 10. Gini impurity is calculated by subtracting the sum of the squared probabilities of each class from one and measures the purity of classification in a given tree’s node. Entropy also measures the purity of classification in a given node, by calculating how much “information” is contained via the probability distributions of classes within a node. Tweaking the number of trees in the Random Forest is another common and important hyperparameter to keep in mind as we built a model maximized predictive accuracy without overfitting the training data. Across these two hyperparameter sets, the Random Forest classifier with 1,000 trees, GINI, and a minimum Information Gain of 10 far outperformed the alternative model. It was able to **classify text into the three classes with 45.4% accuracy, 45.4% weighted precision, 61.6% weighted recall, and an F1-score of 43.2%.**
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 2]** Comparison of Classification Algorithms", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/classification_table.png"))
+```
+
+
+&emsp;    From the confusion matrix we can see that r/politics was the most common prediction, due to its neutral text that encompasses all sides of the political spectrum. Text from r/Republican was most commonly classified as from r/politics (over 54% of the time) and actually classified correctly as r/Republican with the least frequency (only 20% of the time). Text from r/democrats was also most likely to be predicted as from r/politics; however, it was then next most likely to be correctly classified as from r/democrats (43% of the time). 
+<br>
+```{r, echo=FALSE, warning=FALSE, out.width="50%", out.height="20%",fig.cap="**[Plot 2]** Confusion Matrix from Hyperparameter Set #2", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/data/plots/ml/RF_CM2.png"))
+```
+
+&emsp;    A ROC curve (one versus rest for multiclass classification) was additionally plotted to illustrate the diagnostic ability of our classifiers, and again hyperparameter set #1 far outperformed the second. The second classifier was unable to classify better than baseline (AUC=0.5), and thus should be discarded for any serious decision-making. Future model tuning, including inclusion of other text sources or other categorical features about user demographics could help increase the accuracy of this model.
+<br>
+<br>
+```{r, echo=FALSE, warning=FALSE, out.width="50%", out.height="20%",fig.cap="**[Plot 3]** ROC Curve Comparing Hyperparameter Sets", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/data/plots/ml/ROC.png"))
+```
+
+<br>
+&emsp;    In addition to running random forest on the comments dataframe, we were also interested in how well the Random Forest model acts on the title dataframe when predicting subreddit classification. The same pipeline as previously was applied to prepare and train models on the subreddit *submissions* dataframe. Across two hyperparameter sets, these two classifiers have shown approximately similar performance. The Random Forest classifier with 1,000 trees, GINI, and a minimum Information Gain of 10 slightly outperformed the alternative model. It was able to classify text into the three classes with **50.4% accuracy, 52.0% weighted precision, 50.4% weighted recall, and an F1-score of 50.0%.**  The overall performance of predicting the classifications of titles is **5% higher than that of comments**. This may be due to a higher frequency of formally biased political terminology used in titles, as compared to a higher percentage of generalized terminology used by users in comments.
+
+<br>
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 3]** Comparison of Classification Algorithms - Title Classification", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/classification_table2.png"))
+```
+
+<br>
+```{r, echo=FALSE, warning=FALSE, out.width="50%", out.height="20%",fig.cap="**[Plot 4]** Confusion Matrix on Random Forest Classification of Titles", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/RF_CM2.png"))
+```
+
+&emsp;    A confusion matrix tells us that r/democrats was the most commonly predicted category - as compared to r/politics when we were classifying comments. This may be due to highly distinctive words used in the titles of r/democrats and is worth exploring more in future analysis. **Text from r/Republican was most commonly classified as r/Democrats (over 44% of the time)** and actually classified correctly as r/Republican with the lower frequency (39% of the time). Text from r/politics was most likely to be correctly predicted as its true label (46.1% of the time); however, it was then next most likely to be classified as from r/democrats (34.7% of the time). 
+<br>
+```{r, echo=FALSE, warning=FALSE, out.width="50%", out.height="20%",fig.cap="**[Plot 5]** ROC Curve of Random Forest Classification of Titles", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/ROC2.png"))
+```
+
+*A ROC curve was also plotted to illustrate the diagnostic ability of our classifiers, and again these two hyperparameters have similar performance.*
+
+
+&emsp;    Machine Learning was critical in our analysis of political discourse across Reddit. The key takeaway from our ML analysis is that when examining the ways users interact on different political subreddits in a divided America, there are some noticeable differences that can be picked up by a classification algorithm. Though imperfect, it is promising that the text of these subreddits is enough to get 45% accuracy in classification - and with future research and analysis we would love to examine other platforms such as Twitter or Facebook to see how they compare. Reddit data was chosen for its widespread use, anonymity, and easily subsetted communities that create networks of discourse for like minded people. Those clusters were identifiable in our analysis, and offer critical insights for anyone trying to understand the state of political discourse in America today.
+
+<br>
+<br>
+*Note:* One final note, is that we did change one ML business question since the last deliverable. We had previously planned to classify text into election year/non-election year but due to the short time-frame of the dataset (2020-2021), there isn't enough data to build a robust analysis. Having a timeframe of 10-20 years and being able to watch the evolution of political thought across multiple midterm and presidential elections would be an interesting analysis - but given the scope of this project we decided to switch to classifying text into one of three subreddits. This also aligned better with our overarching questions from the project! Additionally, we had previously hoped to understand how high profile political stunts got discussed on Reddit and tie it to candidate sentiment. However, there were significant data limitations on defining what constitutes a "high profile political stunt" and creating a timestamped dataset of these events. Thus, it remains a question for future analysis but will not be explored for this project.
+
+<br>
+Relevant Scripts: <br>
+**[ML Pre-Processing](ML_Data_Prep.html)** <br>
+**[ML Models](ML_Model_Building.html)**<br>
+**[ML DBFS Model Saving and Loading](model_loading.html)**

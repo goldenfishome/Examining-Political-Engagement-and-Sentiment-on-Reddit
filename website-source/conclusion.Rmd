@@ -1,0 +1,74 @@
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  font-family: "Times New Roman", Times, serif;
+}
+</style>
+
+```{r setup, warning=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '..')
+```
+
+```{r, warning=FALSE, echo=FALSE}
+knitr::include_graphics(paste0(getwd(), "/website-source/politics_banner.png"))
+```
+
+### ***Examining Political Engagement and Sentiment on Reddit - Conclusion***
+
+<br>
+
+|    *ANLY 502 Final Project*
+|    *Group Members: Clara Richter, Elise Rust, Yujia Jin*
+|    *Fall 2022*
+
+<br>
+
+##### <span style="color:DarkBlue">This page contains the **Conclusion** work on the Reddit data project. Links to relevant code notebooks are attached throughout.</span>
+
+<br>
+Directory:
+Directory:
+1. **[Homepage](index.html)**
+2. **[Exploratory Data Analysis](eda.html)**
+3. **[Natural Language Processing Analysis](nlp.html)**
+4. **[Machine Learning Analysis](ml.html)**
+
+<br>
+
+&emsp;    Our goal of this study was to deep dive into the state of politics in America. We were interested in whether Reddit could be representative of national discourse and national sentiment, in how divisive different political subreddits actually were, and how common topics and sentiment varied across subreddits of different ideologies. We performed robust textual analysis of American political discourse on Reddit - a highly trafficked and anonymous social media platform whose subcommunities of dialogue make it a perfect case study of political factions. To try to pinpoint differences between left-leaning and right-leaning political communities in America, we analyzed three different subreddits: r/politics (which theoretically has users of all political ideologies), r/Republican (which caters to the political right), and r/democrats (which caters to the political left). Through visualizations, Natural Language processing models, and Machine Learning models, this analysis aimed to better understand textual patterns of different political Reddit users and tie these trends to the state of the economy.
+<br>
+
+&emsp;    Through Exploratory Data Analysis we identified patterns in engagement and Reddit user behavior across subreddits and topics. For anyone looking to get a political message across or organize an event around a political issue, who may be hoping to reach the largest audience on Reddit, the best times to post in all political subreddits is the afternoon (12pm - 6pm). Avoid posting in the middle of the night or early in the morning on these platforms! Additionally, engagement can be maximized by optimizing text length - the best title length is in the range of 50 to 100 words to achieve high engagement in political subreddits.
+<br>
+
+&emsp;    Through Natural Language Processing, our primary finding was pinpointing how sentiment varies across subreddits. Both sides of the political spectrum are grappling with intense and controversial issues – e.g. gun violence, healthcare, education, the strength of our democratic systems – and we were curious to see how people of different ideologies were talking about these issues. Were people more civil and positive when talking to like-minded individuals? Did discourse on r/politics, a melting pot of ideas, spawn more debate and negative sentiment? How did this vary by topic? Were some topics, potentially more controversial and high profile topics like the police, met with positive, neutral, or negative sentiment? Our NLP analysis revealed that the comments of r/Republican skew positive, while the comments of r/democrats and r/politics skew slightly negative **(46%, 50.8%, and 62%, respectively)**. Additionally, discussion of 4 main topics: Climate, Economy, Healthcare, and the Police all faced mostly negative discourse at 61.5%, 65.9%, 66.5%, and 66.7% negative, respectively. **Climate had the highest rate of positive discourse – 33.8% - which is hopefully indicative of problem solving and solution building for such an important global issue**. Through NLP we also pulled out keywords for each subreddit that sparked the most discussion: **vote, civil, plea** for r/politics, **republican, vote, concern** for r/Republican, and **democrat, reddit, and rule** for r/democrats. These text frequencies, as well as comment frequencies, offer a small but important glimpse into what subjects are most interesting to people of each political group.
+<br>
+
+```{r, echo=FALSE, warning=FALSE, out.width="50%", out.height="20%",fig.cap="**[Fig 1]** Sentiment of Text Broken Down by Subreddit", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/data/plots/nlp/sent_subreddits.png"))
+```
+<br>
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 1]** Sentiment of Text By Topic", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/sent_topic_table.png"))
+```
+
+&emsp;    Through Machine Learning, we solidified our earlier assumptions about division across the subreddits. External research suggested that America was more divided than ever into a two-party system. We aimed to test that assumption by classifying text into our three subreddits – to see how well a well-tuned Random Forest classifier could distinguish text from each. After hyperparameter tuning, we were able to achieve a classification accuracy of 45% for comments and 50% for titles. Though imperfect, it was promising that textual classification alone was indicative of political leaning at 50% accuracy. The ways in which people across the political spectrum are getting their news and talking about certain issues is distinct, and if you’re a non-profit trying to get a message across about investments in climate change, understanding these distinctions is critical. ML also allowed us to investigate the relationship between the economy and politics deeper. The results of two robust supervised regression analyses did not find a strong correlation between the text of Reddit posts and the DOW index, indicating that the state of the economy may be less of a correlative factor to politics than originally suspected. Further research using other economic indicators, across a wider timeframe and with daily granularity would be needed to confirm this result.
+<br>
+
+```{r, echo=FALSE, warning=FALSE, out.width="70%", out.height="20%",fig.cap="**[Table 2]** Classification Outcomes", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/sent_topic_table.png"))
+```
+
+
+**Future Work** <br>
+<br>
+&emsp;    Moving forward beyond this study, there are a few areas of future research we hope to expand into. Firstly, expanding the granularity of our key economic indicators to the day level, when available, would allow for much more robust regression analysis. Though we examined DOW, CPI, and unemployment rates, it may be worth investigating other KPIs as well - potentially something like gas prices which directly impacts constituents on a day to day basis. Additionally, in future analysis we plan to look at a longer time frame of analysis. When studying long term trends such as economic health or effects of an election year on text sentiment, a 2 year period is not enough time to generate defensible results. Being able to examine Reddit posts across a 10 or 20 year period, that spans multiple midterm and presidential elections, would offer a much better view into temporal trends. Finally, future analysis plans to investigate other text-based social media platforms where politics are discussed - such as Twitter or Facebook - in order to compare the metrics of interest across different public text sources.
+<br>
+<br>
+<br>
+**Appendix**<br>
+<br>
+&emsp;    In the final iteration of this study, we improved our analysis by expandeding our ML work. In the interim, we ran Random Forest subreddit classification on the ‘submissions’ data as well, to understand how titles across subreddits can be classified. We were able to pick up differences in classification accuracy across comments classification and titles submission - which expanded our understanding of our key business questions.
+<br>

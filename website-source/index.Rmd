@@ -1,0 +1,120 @@
+<style type="text/css">
+  body{
+  font-size: 12pt;
+  font-family: "Times New Roman", Times, serif;
+}
+</style>
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_knit$set(root.dir = '..')
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+knitr::include_graphics(paste0(getwd(),"/website-source/politics_banner.png"))
+```
+
+
+### ***Examining Political Engagement and Sentiment on Reddit***  
+
+<br>
+
+|    *ANLY 502 Final Project*
+|    *Group Members: Clara Richter, Elise Rust, Yujia Jin*
+|    *Fall 2022*
+
+
+<br>
+Directory:
+1. **[Exploratory Data Analysis](eda.html)**
+2. **[Natural Language Processing Analysis](nlp.html)**
+3. **[Machine Learning Analysis](ml.html)**
+4. **[Conclusion](conclusion.html)**
+<br>
+<br>
+<br>
+
+#### **Project Introduction/Overview**
+<br>
+<span style="color:DarkBlue">&emsp;    **In the wake of the tumultuous and high profile 2022 U.S. midterm elections, there is increasing interest in the public sphere around the deep political divides in America. In a diverse country of 350+ million people, there is no singular experience that defines the life of an American citizen, and the political constituents of this country come from varied socioeconomic, demographic, and educational backgrounds. This varied set of experiences leads to varied sets of political perspectives, values, and goals that have resulted in a deeply divided country (Figure 1). <a href="https://www.pewtrusts.org/en/trust/archive/winter-2021/america-is-exceptional-in-its-political-divide">Pew Research Center notes that</a>, though America is not alone in this struggle, the U.S. is “exceptional” in its political divide as “‘a powerful alignment of ideology, race, and religion renders America’s divisions unusually encompassing and profound.’” Thus, as the country begins to grapple with this new political reality it is important to fully understand just how deep these divisions run. A promising place to begin this investigation is by doing a deep dive into social media to explore behavior trends in how people engage with politics online.**</span>
+<br>
+<br>
+
+```{r echo=FALSE, warning=FALSE, out.width="75%", out.height="20%",fig.cap="**[Fig. 1]** PEW Research Center American Polarization Statistics. <a href=https://www.pewresearch.org/politics/2014/06/12/political-polarization-in-the-american-public/>*Source: PEW Research Center*</a>", fig.show='hold',fig.align='center'}
+knitr::include_graphics(paste0(getwd(), "/website-source/PEW_polarization.png"))
+```
+
+<br><br>
+
+&emsp;    Among this new political landscape, the rise of social media has been heavily talked about. Social media is relatively new and its role in politics was fairly uncertain until companies like <a href=https://www.washingtonpost.com/technology/2021/10/25/mark-zuckerberg-facebook-whistleblower/>Facebook came under fire in 2016</a> for their role (or lack thereof) of moderating misinformation campaigns during the 2016 election. As more and more Americans use social media as a news source and place to discuss politics with friends and peers, social media’s role in political discourse will become more important and interesting. According to PEW research center, 39% of Reddit users in 2021 regularly got news from the site (Figure 2). For this analysis, we have explored Reddit as a nexus of this political discourse to try to uncover patterns in the ways different political subredditers post and interact with each other. Reddit was an obvious choice for this study as it encourages open-ended discussion via its anonymity feature. Given the nature of political discussion, being able to tap into a datasource where people have been allowed to post and chat freely about any topic they want is a huge asset in understanding trends better. Additionally, Reddit has hundreds of billions of users and billions of comments - making it a robust and rich platform to explore.
+
+<br>
+```{r echo=FALSE,warning=FALSE, out.width="40%",fig.cap="**[Fig. 2]** Percentae of Social Media Users Getting News from Different Platforms. <a href=https://www.pewresearch.org/journalism/2021/09/20/news-consumption-across-social-media-in-2021/>*Source: PEW Research Center*</a>"}
+knitr::include_graphics(paste0(getwd(), "/website-source/reddit_news.png"))
+```
+
+
+<br>
+&emsp;    Thus, the goals of this analysis are twofold: first, to better understand the nature and intensity of political divisions in the country; and second, to understand textual patterns of different political Reddit users. The second goal is rooted in the understanding that a firm like a non-profit or lobbyist firm that is hoping to maximize engagement with a political/social issue, must first understand the different political factions they’re speaking to. Whether the goal is to galvanize existing supporters around an issue, or try to cross the aisle and find middle ground on a polarizing topic - understanding the users you’re talking to, their existing opinions on a topic, and the topics they care about most is critical. Understanding how truly different the political left and political right see a topic influences the ways a non-profit must approach said topic.<br>
+<br>
+&emsp;    To accomplish this, we use Natural Language Processing and Machine Learning models in Python to explore different political subreddits across the political spectrum. From this analysis we begin to understand common topics being discussed by different subreddits and compare hot button issues for the various political based of America. We explore sentiment and levels of polarization on each subreddit, looking at both the types of text being posted as well as how sentiment of the comments section varies. We predict what subreddit different text chunks originate from and by examining these correlations and trends we can start to understand how external variables such as an election year, or economic indicators like the DOW, play a role in political discourse.These issues are ever evolving, but this analysis provides initial insights into the ways in which social media reflects the current state of politics, as well as how different political factions use Reddit for political discourse.
+
+
+<br>
+*The original data for this project is generated via the Reddit Archive data from January 2021 through the end of August 2022, representing about 8TB of uncompressed text JSON data.  which have been converted to two parquet files (about 1TB). The data was downloaded via the <a href=https://ojs.aaai.org/index.php/ICWSM/article/view/7347/7201>Pushift Reddit Dataset</a> and subsetted to include 3 subreddits: r/politics, r/Republicans, and r/democrats.*
+
+<br>
+<hr style="border:2px solid gray">
+
+#### ***Our overarching business questions are:*** 
+*1) How divided is discourse on political subreddits?* <br>
+*2) How can nonprofits, lobbyists, and politicians leverage Reddit to push legislative agendas?*
+<br>
+<br>
+
+##### The key sub-business questions we aim to answer via EDA, NLP, and ML techniques are:
+<span style="color:DarkBlue">**EDA Questions**</span>
+
+1) How will we measure “engagement” on Reddit? In what ways do people most commonly interact with a post? <br>
+  *Technical Approach:* We categorize “engagement” as upvotes/downvotes and number of comments on a post. The more of these interactions a post has, the more engagement it has received. We measure these interactions by using pushshift.io Reddit API to call the variables num_comments and score and visually examine trends.
+
+2) When are the best times to post on Reddit to get the most engagement? <br>
+  *Technical Approach:* We measure the best times to post on Reddit by using pushshift.io Reddit API to call the 'created_utc' variable. Through feature generation we generate time variables of different granularities (year, month, day, time of day). We visually order the Reddit posts by most engagement to least engagement to observe the best times to post on Reddit to maximize engagement.
+
+
+3) How long should a Reddit post be to get the most engagement? How many sentences, words, or length of words? <br>
+  *Technical Approach:*  We use the pushshift.io Reddit API to call the title variable to get the text (string) of each post. We count the frequency of sentences and words in each post, as well as count the lengths of the words in each post. We visually order the Reddit posts by most engagement to least engagement to observe how the length of a post on Reddit leads to engagement. 
+
+<span style="color:DarkBlue">**NLP Questions**</span>
+
+4) Which subreddits produce the most/least negative discourse in their comments? In their titles? <br>
+  *Technical Approach:* Extracting text from both titles and comments on Reddit posts, we use the <a href=https://nlp.johnsnowlabs.com/2021/01/18/sentimentdl_use_twitter_en.html>pretrained Spark NLP John Snow Labs Sentiment Classifier from Twitter</a> to classify sentiment of this text. By grouping sentiment by subreddit we can visualize the distribution of positive, negative, and neutral text by subreddit across titles and comments.
+
+5) Which topics are correlated to the highest rates of negative sentiment and/or polarization? <br>
+  *Technical Approach:* Extracting text from both titels and comments on Reddit posts, and using the same sentiment analysis from question #4, we can then group sentiment by topic. Topic is generated via regex commands to encompass 4 different political topics, such as 'climate' and the 'economy.'
+  
+6) Do posts with positive, negative, or neutral sentiment receive the most engagement on Reddit? <br>
+  *Technical Approach:* Extracting the same sentiment analysis from previous questions, we draw on number of comments and votes of post to draw connections between sentiment and engagement. 
+
+7) How polarized is political discourse these days? Which political topics produce the most polarized discourse? <br>
+  *Technical Approach:* This could theoretically be a subquestion of question #4 - we define the range of positive to negative sentiment appearing on a given subreddit and visually examine trends. This is simply a reframing of our NLP question #1, but presented in a clearer and more concise way to display the polarity of the subreddits.
+
+8) How does the economy influence political sentiment? When KPIs (Key Performance Indicators) like unemployment rate are high, how does that affect the types of media and comments that are commonly posted? <br>
+  *Technical Approach:* Using an externally web-scraped dataset of key performance indicators like the DOW index, Consumer Price Index, and Unemployment Rate, we compare poltiical sentiment across time and map trends to economic fluctuations.
+
+<span style="color:DarkBlue">**Machine Learning Questions**</span>
+
+9) Can we predict the state of the economy via KPIs based on text sentiment across 3 political subreddits? <br>
+  *Technical Approach:* We build, train, and test 2 regression models: Decision Tree Regressor and Gradient Boosted Tree Regressor, to predict DOW index from TFIDF-vectorized text data. After hyperparameter tuning, we evaluate and compare results to select the highest performing model.
+
+10) Can we classify the text of posts and comments into their correct political subreddit? How different is political discourse across all three subreddit communities? <br>
+  *Technical Approach:* We build, train, and test 3 classification models: 2 Random Forest models with different hyperparameter sets that classify comment data and 1 RF model that classifies title data, to classify text data into 3 political subreddits. After hyperparameter tuning, we evaluate and compare results to select the highest performing model.
+
+
+<br>
+<br>
+
+```{r, echo=FALSE, warning=FALSE}
+knitr::include_graphics(paste0(getwd(),"/website-source/blue-dark-footer-bg-v3.png"))
+```
